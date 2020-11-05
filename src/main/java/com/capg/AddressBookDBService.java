@@ -8,19 +8,19 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class AddressBookDBService {
 	private static AddressBookDBService addBookDB;
-		
-	public AddressBookDBService() {}
-	
+
+	public AddressBookDBService() {
+	}
+
 	public static AddressBookDBService getInstance() {
-		if(addBookDB == null) {
+		if (addBookDB == null) {
 			addBookDB = new AddressBookDBService();
 		}
 		return addBookDB;
 	}
-	
+
 	private Connection getConnection() throws SQLException {
 		String jdbcURL = "jdbc:mysql://localhost:3306/addressbookservice?useSSL=false";
 		String userName = "root";
@@ -29,16 +29,15 @@ public class AddressBookDBService {
 		connection = DriverManager.getConnection(jdbcURL, userName, password);
 		return connection;
 	}
-	
+
 	public List<AddressBookData> readData() {
 		String sql = "SELECT * FROM addressbook a inner join address c on a.id=c.id;";
 		List<AddressBookData> addBookList = new ArrayList<>();
-		try(Connection connection = this.getConnection()) {
+		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery(sql);
 			addBookList = this.getAddressBookData(result);
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return addBookList;
@@ -47,7 +46,7 @@ public class AddressBookDBService {
 	private List<AddressBookData> getAddressBookData(ResultSet result) {
 		List<AddressBookData> addressBookList = new ArrayList<>();
 		try {
-			while(result.next()) {
+			while (result.next()) {
 				int id = result.getInt("id");
 				String bookName = result.getString("book_name");
 				String firstName = result.getString("first_name");
@@ -57,8 +56,7 @@ public class AddressBookDBService {
 				int zip = result.getInt("zip");
 				addressBookList.add(new AddressBookData(id, bookName, firstName, lastName, city, state, zip));
 			}
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return addressBookList;

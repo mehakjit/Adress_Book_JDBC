@@ -1,5 +1,6 @@
 package com.capg;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class AddressBookService {
@@ -8,7 +9,7 @@ public class AddressBookService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	}
 
-	private List<AddressBookData> addBookList;
+	private List<AddressBookData> addBookList = null;
 	private AddressBookDBService addressBookDBService;
 	
 	public AddressBookService() {
@@ -43,6 +44,7 @@ public class AddressBookService {
 		AddressBookData addBookData = this.getAddressBookData(firstname);
 		if (addBookData != null)
 			addBookData.city = city;
+	
 	}
 	
 	public boolean checkAddressBookDataInSyncWithDB(String fname, String city) {
@@ -54,6 +56,13 @@ public class AddressBookService {
 			}
 		}
 		return false;
+	}
+
+	public List<AddressBookData> readAddressBookForDateRange(IOService dbIo, LocalDate startDate, LocalDate endDate) {
+		if (dbIo.equals(IOService.DB_IO)) {
+			return addressBookDBService.getAddressBookForDateRange(startDate, endDate);
+		}
+		return null;
 	}
 }
 

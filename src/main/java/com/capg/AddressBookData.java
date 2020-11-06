@@ -20,4 +20,10 @@ public class AddressBookData {
 		this.state = state;
 		this.zip = zip;
 	}
+
+	@Override
+	public String toString() {
+		return "AddressBookData [firstName=" + firstName + ", city=" + city + "]";
+	}
+	
 }

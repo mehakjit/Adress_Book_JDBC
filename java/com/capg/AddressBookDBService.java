@@ -65,7 +65,8 @@ public class AddressBookDBService {
 	}
 
 	private int updateAddressBookDataUsingPreparedStatement(String firstName, String city) {
-		String sql = String.format("update address set city= '%s' where id in (select id from addressbook where first_name='%s');", city, firstName);
+		String sql = String.format("update address set city= '%s' where id in (select id from addressbook where first_name='%s')",
+					city, firstName);
 		try(Connection connection = this.getConnection()) {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			return statement.executeUpdate();

@@ -34,4 +34,11 @@ public class AddressBookTest {
     	List<AddressBookData> addBookData = service.readAddressBookForDateRange(IOService.DB_IO, startDate, endDate);
     	Assert.assertEquals(2, addBookData.size());
 	}
+	@Test
+	public void givenCityOrState_ShouldReturn_TotalContacts() {
+		AddressBookService service = new AddressBookService();
+		service.readAddresBookData(IOService.DB_IO);
+    	int no_Of_Contacts = service.getCountOfPerson("Rohtak","Punjab");
+    	Assert.assertEquals(3, no_Of_Contacts);
+	}
 }

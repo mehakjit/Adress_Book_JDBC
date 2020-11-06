@@ -95,4 +95,18 @@ public class AddressBookDBService {
 			}
 			return addBookList;
 		}
+
+		public int countPersonUsing_PreparedStatement(String cityName, String stateName) {
+			String sql = String.format(" select count(id) as count from address where city='%s' or state= '%s';", cityName, stateName);
+			try(Connection connection = this.getConnection()) {
+				Statement statement = connection.createStatement();
+				ResultSet result = statement.executeQuery(sql);
+				result.first();
+				return result.getInt("count");
+			}
+			catch(SQLException e) {
+				e.printStackTrace();
+			}
+			return 0;
+		}
 }

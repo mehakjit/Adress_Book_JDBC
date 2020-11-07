@@ -109,4 +109,68 @@ public class AddressBookDBService {
 			}
 			return 0;
 		}
-}
+
+		public AddressBookData addContactToAddressBookDB(int id, String bookName, String firstName, String lastName,
+				String city, String state, int zip, String now) {
+			int personId = -1;
+			AddressBookData contact = null;
+			Connection connection = null;
+			try {
+				connection = this.getConnection();
+				connection.setAutoCommit(false);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			try (Statement statement = connection.createStatement()) {
+				String sql = String.format(
+						"insert into addressbook(id,book_name,first_name, last_name, date_added) "
+								+ "values (%s, '%s', '%s', '%s', '%s');",
+						id, bookName, firstName, lastName, Date.valueOf(now));
+				int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+				if (rowAffected == 1) {
+					ResultSet resultSet = statement.getGeneratedKeys();
+					if (resultSet.next())
+						personId = resultSet.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				try {
+					connection.rollback();
+					return contact;
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			try (Statement statement = connection.createStatement()) {
+				String sql = String.format("insert into address (id, street, city, state, zip) values (%s, '%s', '%s','%s', %s);",
+						id, city, state, zip);
+				int rowAffected = statement.executeUpdate(sql);
+				if (rowAffected == 1) {
+					contact = new AddressBookData(id, bookName, firstName, lastName, city, state, zip, LocalDate.now());
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				try {
+					connection.rollback();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			System.out.println(contact);
+			try {
+				connection.commit();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return contact;
+		}
+	}
+

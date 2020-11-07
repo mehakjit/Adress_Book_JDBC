@@ -68,7 +68,18 @@ public class AddressBookService {
 	public int getCountOfPerson(String cityName, String stateName) {
 		return addressBookDBService.countPersonUsing_PreparedStatement(cityName, stateName);
 	}
-	
+
+	public void addContactToAddressBookDB(int id, String bookName, String firstName, String lastName, String city, String state, int i, String now) {
+			addBookList.add(addressBookDBService.addContactToAddressBookDB(id, bookName, firstName, lastName, city, state, i, now));
+	}
+
+	public boolean checkAddressBookInSyncWithDB(int id) {
+		for (AddressBookData data : addBookList) {
+			if (data.id == (id)) 
+					return true;
+		}
+		return false;
+	}
 	
 }
 

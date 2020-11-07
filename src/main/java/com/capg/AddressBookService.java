@@ -64,5 +64,11 @@ public class AddressBookService {
 		}
 		return null;
 	}
+
+	public int getCountOfPerson(String cityName, String stateName) {
+		return addressBookDBService.countPersonUsing_PreparedStatement(cityName, stateName);
+	}
+	
+	
 }
 

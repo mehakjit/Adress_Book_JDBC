@@ -1,12 +1,6 @@
 package com.capg;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Enumeration;
+import java.time.LocalDate;
 import java.util.List;
 
 public class AddressBookService {
@@ -15,11 +9,11 @@ public class AddressBookService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	}
 
-	private List<AddressBookData> addBookList;
-	private AddressBookDBService addBookDB;
+	private List<AddressBookData> addBookList = null;
+	private AddressBookDBService addressBookDBService;
 	
 	public AddressBookService() {
-		addBookDB = AddressBookDBService.getInstance();
+		addressBookDBService = AddressBookDBService.getInstance();
 	}
 	
 	public AddressBookService(List<AddressBookData> addBookList) {
@@ -29,9 +23,46 @@ public class AddressBookService {
 	
 	public List<AddressBookData> readAddresBookData(IOService ioService) {
 		if(ioService.equals(IOService.DB_IO)) {
-			this.addBookList = addBookDB.readData();
+			this.addBookList = addressBookDBService.readData();
 		}
 		return this.addBookList;
+	}
+	
+	private AddressBookData getAddressBookData(String name) {
+		for (AddressBookData data : addBookList) {
+			if (data.firstName.equals(name)) {
+				return data;
+			}
+		}
+		return null;
+	}
+	
+	public void updateContactsCity(String firstname, String city) {
+		int result = addressBookDBService.updateAddressBookData_Using_PreparedStatement(firstname, city);
+		if (result == 0)
+			return;
+		AddressBookData addBookData = this.getAddressBookData(firstname);
+		if (addBookData != null)
+			addBookData.city = city;
+	
+	}
+	
+	public boolean checkAddressBookDataInSyncWithDB(String fname, String city) {
+		for (AddressBookData data : addBookList) {
+			if (data.firstName.equals(fname)) {
+				if (data.city.equals(city)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public List<AddressBookData> readAddressBookForDateRange(IOService dbIo, LocalDate startDate, LocalDate endDate) {
+		if (dbIo.equals(IOService.DB_IO)) {
+			return addressBookDBService.getAddressBookForDateRange(startDate, endDate);
+		}
+		return null;
 	}
 }
 
